@@ -17,11 +17,13 @@ app.use(cookieParser());
 
 // routes
 const users = require('./routes/users');
+const categories = require('./routes/categories');
 
 // register routes
 app.use('/api/users', users);
+app.use('/api/categories', categories);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log('Server running');
-})
+});

@@ -110,4 +110,12 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
     });
 });
 
+router.get('/logout', passport.authenticate('jwt', { session: false }), (req, res) => {
+    req.logout();
+    return res.status(200).json({
+        success: 'true',
+        message: 'Logged Out'
+    })
+});
+
 module.exports = router;

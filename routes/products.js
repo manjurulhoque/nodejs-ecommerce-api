@@ -40,7 +40,21 @@ router.get('/', (req, res) => {
 })
 
 // get product by id
+router.get('/:product_id', (req, res) => {
+    const errors = {};
+    // Product
+    Product.findOne({_id: req.params.product_id})
+        .populate('category')
+        .then(product => {
+            if (!product) {
+                errors.noproduct = 'There is no product with this Id'
+                return res.status(404).json(errors);
+            }
 
+            res.json(product);
+        })
+        .catch(err => {return res.status(404).json(err)});
+})
 
 
 module.exports = router;

@@ -10,4 +10,12 @@ Features
 6. Get Products by Category
 7. Get All Categories
 
+Used Tech Stack
+
+1. Node.js
+2. Expressjs
+3. MongoDB
+4. Passportjs
+5. Validation library
+
 Feel free to contribute.

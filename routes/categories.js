@@ -7,6 +7,16 @@ const validateCategoryInput = require('../utils/validation/category');
 // Load Category model
 const Category = require('../models/Category');
 
+// all categories
+router.get('/', (req, res) => {
+    Category.find()
+            .then((categories, err) => {
+                if(err) return res.json(err).status(200);
+
+                return res.status(200).json(categories);
+            })
+});
+
 // create category
 router.post('/create', (req, res) =>{
     const {errors, isValid} = validateCategoryInput(req.body);

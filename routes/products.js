@@ -54,7 +54,22 @@ router.get('/:product_id', (req, res) => {
             res.json(product);
         })
         .catch(err => {return res.status(404).json(err)});
-})
+});
 
+// products by category
+router.get('/:category_id/category', (req, res) => {
+    const errors = {};
+    // Product
+    Product.find({"category": req.params.category_id})
+        .then((products) => {
+            if (!products) {
+                errors.noproduct = 'There is no product with this category'
+                return res.status(404).json(errors);
+            }
+
+            res.json(products);
+        })
+        .catch(err => {return res.status(404).json(err)});
+});
 
 module.exports = router;

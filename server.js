@@ -15,6 +15,12 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+// routes
+const users = require('./routes/users');
+
+// register routes
+app.use('/api/users', users);
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log('Server running');

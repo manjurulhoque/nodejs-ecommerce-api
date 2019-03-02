@@ -17,6 +17,17 @@ router.get('/', (req, res) => {
             })
 });
 
+// categories by limit
+router.get('/limits/:limit', (req, res) => {
+    Category.find()
+            .limit(parseInt(req.params.limit))
+            .then((categories, err) => {
+                if(err) return res.json(err).status(200);
+
+                return res.status(200).json(categories);
+            })
+});
+
 // create category
 router.post('/create', (req, res) =>{
     const {errors, isValid} = validateCategoryInput(req.body);

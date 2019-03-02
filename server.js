@@ -5,6 +5,25 @@ const mongoose =require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const cors = require('cors');
+const path = require('path');
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors()); // enabling all cors
+// app.use(function (req, res, next) {
+//     res.setHeader("Access-Control-Allow-Origin", "*");
+//     res.setHeader("Access-Control-Allow-Credentials", "true");
+//     res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
+//     res.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Connection, Access-Control-Request-Method, Access-Control-Request-Headers");
+//     next();
+// });
+
+app.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
 
 // connect to mongodb
 mongoose.connect('mongodb://localhost/my_ecommerce', { useNewUrlParser: true})
@@ -34,5 +53,5 @@ app.use('/api/products', products);
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-    console.log('Server running');
+    console.log('Server running on port: ' + port);
 });

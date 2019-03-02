@@ -1,8 +1,12 @@
 const Validator = require('validator');
 const isEmpty = require('./is-empty');
 
-module.exports = validateProductInput = data => {
+module.exports = validateProductInput = (data, files) => {
     let errors = {};
+
+    if(files.length == 0) {
+        errors.images = "Upload at least one image for product";
+    }
 
     data.name = !isEmpty(data.name) ? data.name : '';
     data.description = !isEmpty(data.description) ? data.description : '';

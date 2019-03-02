@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 const passport = require('passport');
+const multer = require('multer');
+const path = require('path');
+const _ = require('lodash');
 
 // Load Validation
 const validateProductInput = require('../utils/validation/product');
@@ -9,16 +12,65 @@ const validateProductInput = require('../utils/validation/product');
 // Load Model
 const Product = require('../models/Product');
 
-// create product
-router.post('/create', passport.authenticate('jwt', { session: false }), (req, res) => {
+// SET STORAGE
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        // if(!file.originalname.match(/\.(jpeg|jpg|png|JPEG|JPG|PNG)$/)){
 
-    const { errors, isValid } = validateProductInput(req.body);
+        //     var err = new Error();
+        //     err.code="filetype";
+        //     return cb(err);
+        // }else {
+        //     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+        // }
+    }
+});
+
+let validateFile = function(file, cb){
+    let allowedFileTypes = /jpeg|jpg|png|JPEG|JPG|PNG/;
+    const extension = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimeType = allowedFileTypes.test(file.mimetype);
+    if(extension && mimeType){
+        return cb(null, true);
+    }else{
+        cb("Invalid file type. Only JPEG, PNG, JPG file are allowed.")
+    }
+}
+
+let upload = multer(
+    { 
+        storage: storage,
+        limits: { fileSize:200000 },
+        fileFilter: function(req, file, callback){
+            validateFile(file, callback);
+        }
+    }
+);
+
+// create product
+router.post('/create', upload.array('images', 5), passport.authenticate('jwt', { session: false }), (req, res) => {
+
+    // return res.send(_.map(req.files, (image, index) => {return image.path}));
+
+    const { errors, isValid } = validateProductInput(req.body, req.files);
 
     if(!isValid) {
         return res.status(400).json(errors);
     }
 
-    const newProduct = new Product(req.body);
+    // // image is requied
+    // upload((req, res, err) => {
+
+    // });
+
+    const newProduct = new Product({
+        ...req.body,
+        images: _.map(req.files, (image, index) => image.path)
+    });
 
     newProduct.save()
             .then(product => {
